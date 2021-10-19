@@ -1,0 +1,49 @@
+.include ../../models/ptm_130_aimspice.spi
+.include ../../lib/SUN_TR_GF130N.spi
+.include pixelSensor.cir
+
+*----------------------------------------------------------------
+* PARAMETERS
+*----------------------------------------------------------------
+
+.param TRF = 10n
+.param TCLK = 100n
+.param C_ERASE = 5
+.param C_EXPOSE = 255
+.param C_CONVERT = 255
+.param C_READ = 5
+
+*- Pulse Width of control signals
+.param PW_ERASE =  {(C_ERASE +1)*TCLK}
+.param PW_EXPOSE =  {(C_EXPOSE +1)*TCLK}
+.param PW_CONVERT =  {(C_CONVERT +1)*TCLK}
+.param PW_READ =  {(C_READ +1)*TCLK}
+
+*- Delay of control signals
+.param TD_ERASE = {TCLK }
+.param TD_EXPOSE = {TD_ERASE + PW_ERASE + TCLK}
+.param TD_CONVERT = {TD_EXPOSE + PW_EXPOSE + TCLK}
+.param TD_READ = {TD_CONVERT + PW_CONVERT + TCLK}
+.param PERIOD = {TD_READ + PW_READ + TCLK}
+
+*- Analog parameters
+.param VDD = 1.5
+.param VADC_MIN = 0.5
+.param VADC_MAX = 1.1
+.param VADC_REF = {VADC_MAX - VADC_MIN}
+.param VADC_LSB = {VADC_REF/256}
+
+
+VDD VDD VSS dc VDD
+V1 VSTORE VSS dc 0.7
+VSS VSS 0 dc 0
+V2 VRAMP VSS dc 0
+
+
+XC1 VCMP_OUT VSTORE VRAMP VDD VSS COMP
+
+.dc V2 0 1.5 0.214286
+.plot v(VCMP_OUT)
+
+
+
