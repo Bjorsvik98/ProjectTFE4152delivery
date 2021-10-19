@@ -1,4 +1,4 @@
 
 ps:
-	iverilog -g2012 -o pixelSensor -c pixelSensor.fl
-	vvp -n pixelSensor
+	iverilog -g2012 -o pixelArray -c pixelArray.fl
+	vvp -n pixelArray

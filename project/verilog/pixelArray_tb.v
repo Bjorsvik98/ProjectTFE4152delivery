@@ -66,18 +66,21 @@ module pixelArray_tb;
    logic              expose;
    //logic[3:0]         read;
    logic read1;
-   logic read2 = 0;
-   logic read3 = 0;
-   logic read4 = 0;
-   tri[7:0]         pixData; //  We need this to be a wire, because we're tristating it
+   logic read2;
+   logic read3;
+   logic read4;
+   tri[7:0]         pixData1; //  We need this to be a wire, because we're tristating it
+   tri[7:0]         pixData2;
+   tri[7:0]         pixData3;
+   tri[7:0]         pixData4;
 
    //Instanciate the pixel
-   PIXEL_ARRAY  #(.dv_pixel(dv_pixel))  ps1(anaBias1, anaRamp, anaReset, erase,expose, read1,read2,read3,read4,pixData);
+   PIXEL_ARRAY  #(.dv_pixel(dv_pixel))  ps1(anaBias1, anaRamp, anaReset, erase,expose, read1,read2,read3,read4,pixData1,pixData2,pixData3,pixData4);
 
    //------------------------------------------------------------
    // State Machine
    //------------------------------------------------------------
-   parameter ERASE=0, EXPOSE=1, CONVERT=2, READ=3, IDLE=4;
+   parameter ERASE=0, EXPOSE=1, CONVERT=2, READ1=3, READ2=4, READ3=5, READ4=6, IDLE=7;
 
    logic               convert;
    logic               convert_stop;
@@ -97,30 +100,74 @@ module pixelArray_tb;
         ERASE: begin
            erase <= 1;
            read1 <= 0;
+           read2 <= 0;
+           read3 <= 0;
+           read4 <= 0;
            expose <= 0;
            convert <= 0;
         end
         EXPOSE: begin
            erase <= 0;
            read1 <= 0;
+           read2 <= 0;
+           read3 <= 0;
+           read4 <= 0;
            expose <= 1;
            convert <= 0;
         end
         CONVERT: begin
            erase <= 0;
            read1 <= 0;
+           read2 <= 0;
+           read3 <= 0;
+           read4 <= 0;
            expose <= 0;
            convert = 1;
         end
-        READ: begin
+        READ1: begin
            erase <= 0;
            read1 <= 1;
+           read2 <= 0;
+           read3 <= 0;
+           read4 <= 0;
            expose <= 0;
            convert <= 0;
         end
+        READ2: begin
+           erase <= 0;
+           read1 <= 0;
+           read2 <= 1;
+           read3 <= 0;
+           read4 <= 0;
+           expose <= 0;
+           convert <= 0;
+        end
+        READ3: begin
+           erase <= 0;
+           read1 <= 0;
+           read2 <= 0;
+           read3 <= 1;
+           read4 <= 0;
+           expose <= 0;
+           convert <= 0;
+        end
+        READ4: begin
+           erase <= 0;
+           read1 <= 0;
+           read2 <= 0;
+           read3 <= 0;
+           read4 <= 1;
+           expose <= 0;
+           convert <= 0;
+        end
+
+
         IDLE: begin
            erase <= 0;
            read1 <= 0;
+           read2 <= 0;
+           read3 <= 0;
+           read4 <= 0;
            expose <= 0;
            convert <= 0;
 
@@ -152,15 +199,31 @@ module pixelArray_tb;
            end
            CONVERT: begin
               if(counter == c_convert) begin
-                 next_state <= READ;
+                 next_state <= READ1;
                  state <= IDLE;
               end
            end
-           READ:
+           READ1:
+             if(counter == c_read) begin
+                state <= IDLE;
+                next_state <= READ2;
+             end
+           READ2:
+             if(counter == c_read) begin
+                state <= IDLE;
+                next_state <= READ3;
+             end
+           READ3:
+             if(counter == c_read) begin
+                state <= IDLE;
+                next_state <= READ4;
+             end
+           READ4:
              if(counter == c_read) begin
                 state <= IDLE;
                 next_state <= ERASE;
-             end
+             end    
+
            IDLE:
              state <= next_state;
          endcase // case (state)
@@ -187,7 +250,10 @@ module pixelArray_tb;
    assign anaBias1 = expose ? clk : 0;
 
    // If we're not reading the pixData, then we should drive the bus
-   assign pixData = read1 ? 8'bZ: data;
+   assign pixData1 = read1 ? 8'bZ: data;
+   assign pixData2 = read2 ? 8'bZ: data;
+   assign pixData3 = read3 ? 8'bZ: data;
+   assign pixData4 = read4 ? 8'bZ: data;
 
    // When convert, then run a analog ramp (via anaRamp clock) and digtal ramp via
    // data bus. Assert convert_stop to return control to main state machine.
@@ -211,10 +277,19 @@ module pixelArray_tb;
       if(reset) begin
          pixelDataOut = 0;
       end
-      else begin
-         if(read1)
-           pixelDataOut <= pixData;
+      else if(read1) begin
+           pixelDataOut <= pixData1;
       end
+      else if(read2) begin
+           pixelDataOut <= pixData2;
+      end
+      else if(read3) begin
+           pixelDataOut <= pixData3;
+      end
+      else if(read4) begin
+           pixelDataOut <= pixData4;
+      end
+      
    end
 
    //------------------------------------------------------------
