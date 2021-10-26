@@ -18,5 +18,8 @@ ysfsm: synth
 synth:
 	yosys pixelSensorFsm.ys
 
+test: psfsm synth
 
-test: ps psfsm synth
+top: 
+	iverilog -g2012 -o pixelTop -c pixelTop.fl
+	vvp -n pixelTop

@@ -39,6 +39,8 @@
 //====================================================================
 module pixelSensor_tb;
 
+   
+
    //------------------------------------------------------------
    // Testbench clock
    //------------------------------------------------------------
@@ -147,6 +149,7 @@ module pixelSensor_tb;
         reset = 1;
 
         #clk_period  reset=0;
+        
 
         $dumpfile("pixelSensorFsm_tb.vcd");
         $dumpvars(0,pixelSensor_tb);
