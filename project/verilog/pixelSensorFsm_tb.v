@@ -62,18 +62,24 @@ module pixelSensor_tb;
    assign anaReset = 1;
 
    //Digital
-   wire              erase;
-   wire              expose;
-   wire             read;
+   wire             erase;
+   wire             expose;
+   wire             read1;
+   wire             read2;
+   wire             read3;
+   wire             read4;
    wire             convert;
 
-   tri[7:0]         pixData; //  We need this to be a wire, because we're tristating it
+   tri[7:0]         pixData1; //  We need this to be a wire, because we're tristating it
+   tri[7:0]         pixData2;
+   tri[7:0]         pixData3;
+   tri[7:0]         pixData4;
 
    //Instanciate the pixel
-   PIXEL_SENSOR  #(.dv_pixel(dv_pixel))  ps1(anaBias1, anaRamp, anaReset, erase,expose, read,pixData);
+   PIXEL_ARRAY  #(.dv_pixel(dv_pixel))  ps1(anaBias1, anaRamp, anaReset, erase,expose, read1,read2,read3,read4,pixData1,pixData2,pixData3,pixData4);
 
    pixelSensorFsm #(.c_erase(5),.c_expose(255),.c_convert(255),.c_read(5))
-   fsm1(.clk(clk),.reset(reset),.erase(erase),.expose(expose),.read(read),.convert(convert));
+   fsm1(.clk(clk),.reset(reset),.erase(erase),.expose(expose),.read1(read1),.read2(read2),.read3(read3),.read4(read4),.convert(convert));
 
 
    //------------------------------------------------------------
@@ -91,7 +97,10 @@ module pixelSensor_tb;
    assign anaBias1 = expose ? clk : 0;
 
    // If we're not reading the pixData, then we should drive the bus
-   assign pixData = read ? 8'bZ: data;
+   assign pixData1 = read1 ? 8'bZ: data;
+   assign pixData2 = read2 ? 8'bZ: data;
+   assign pixData3 = read3 ? 8'bZ: data;
+   assign pixData4 = read4 ? 8'bZ: data;
 
    // When convert, then run a analog ramp (via anaRamp clock) and digtal ramp via
    // data bus.
@@ -115,10 +124,19 @@ module pixelSensor_tb;
       if(reset) begin
          pixelDataOut = 0;
       end
-      else begin
-         if(read)
-           pixelDataOut <= pixData;
+      else if(read1) begin
+           pixelDataOut <= pixData1;
       end
+      else if(read2) begin
+           pixelDataOut <= pixData2;
+      end
+      else if(read3) begin
+           pixelDataOut <= pixData3;
+      end
+      else if(read4) begin
+           pixelDataOut <= pixData4;
+      end
+      
    end
 
    //------------------------------------------------------------
@@ -130,7 +148,7 @@ module pixelSensor_tb;
 
         #clk_period  reset=0;
 
-        $dumpfile("pixelSensor_tb.vcd");
+        $dumpfile("pixelSensorFsm_tb.vcd");
         $dumpvars(0,pixelSensor_tb);
 
         #sim_end

@@ -34,7 +34,10 @@ module pixelSensorFsm(
                        input  logic      reset,
                        output logic erase,
                        output logic expose,
-                       output logic read,
+                       output logic read1,
+                       output logic read2,
+                       output logic read3,
+                       output logic read4,
                       output logic convert
 
                       );
@@ -49,44 +52,87 @@ module pixelSensorFsm(
    //------------------------------------------------------------
    // State Machine
    //------------------------------------------------------------
-   parameter ERASE=0, EXPOSE=1, CONVERT=2, READ=3, IDLE=4;
+  parameter ERASE=0, EXPOSE=1, CONVERT=2, READ1=3, READ2=4, READ3=5, READ4=6, IDLE=7;
 
-
-   logic               convert_stop;
+   // logic               convert;
+   // logic               convert_stop;
    logic [2:0]         state,next_state;   //States
-   integer        counter;
-
+   integer           counter;            //Delay counter in state machine
 
    // Control the output signals
    always_ff @(negedge clk ) begin
       case(state)
         ERASE: begin
            erase <= 1;
-           read <= 0;
+           read1 <= 0;
+           read2 <= 0;
+           read3 <= 0;
+           read4 <= 0;
            expose <= 0;
            convert <= 0;
         end
         EXPOSE: begin
            erase <= 0;
-           read <= 0;
+           read1 <= 0;
+           read2 <= 0;
+           read3 <= 0;
+           read4 <= 0;
            expose <= 1;
            convert <= 0;
         end
         CONVERT: begin
            erase <= 0;
-           read <= 0;
+           read1 <= 0;
+           read2 <= 0;
+           read3 <= 0;
+           read4 <= 0;
            expose <= 0;
            convert = 1;
         end
-        READ: begin
+        READ1: begin
            erase <= 0;
-           read <= 1;
+           read1 <= 1;
+           read2 <= 0;
+           read3 <= 0;
+           read4 <= 0;
            expose <= 0;
            convert <= 0;
         end
+        READ2: begin
+           erase <= 0;
+           read1 <= 0;
+           read2 <= 1;
+           read3 <= 0;
+           read4 <= 0;
+           expose <= 0;
+           convert <= 0;
+        end
+        READ3: begin
+           erase <= 0;
+           read1 <= 0;
+           read2 <= 0;
+           read3 <= 1;
+           read4 <= 0;
+           expose <= 0;
+           convert <= 0;
+        end
+        READ4: begin
+           erase <= 0;
+           read1 <= 0;
+           read2 <= 0;
+           read3 <= 0;
+           read4 <= 1;
+           expose <= 0;
+           convert <= 0;
+        end
+
+
         IDLE: begin
            erase <= 0;
-           read <= 0;
+           read1 <= 0;
+           read2 <= 0;
+           read3 <= 0;
+           read4 <= 0;
            expose <= 0;
            convert <= 0;
 
@@ -94,11 +140,7 @@ module pixelSensorFsm(
       endcase // case (state)
    end // always @ (state)
 
-
-   // Control the state transitions.
-   //TODO: The counter should probably be an always_comb. Might be a good idea
-   //to also reset the counter from the state machine, i.e provide the count
-   //down value, and trigger on 0
+   // Control the state transitions
    always_ff @(posedge clk or posedge reset) begin
       if(reset) begin
          state = IDLE;
@@ -122,15 +164,31 @@ module pixelSensorFsm(
            end
            CONVERT: begin
               if(counter == c_convert) begin
-                 next_state <= READ;
+                 next_state <= READ1;
                  state <= IDLE;
               end
            end
-           READ:
+           READ1:
+             if(counter == c_read) begin
+                state <= IDLE;
+                next_state <= READ2;
+             end
+           READ2:
+             if(counter == c_read) begin
+                state <= IDLE;
+                next_state <= READ3;
+             end
+           READ3:
+             if(counter == c_read) begin
+                state <= IDLE;
+                next_state <= READ4;
+             end
+           READ4:
              if(counter == c_read) begin
                 state <= IDLE;
                 next_state <= ERASE;
-             end
+             end    
+
            IDLE:
              state <= next_state;
          endcase // case (state)
@@ -140,5 +198,6 @@ module pixelSensorFsm(
            counter = counter + 1;
       end
    end // always @ (posedge clk or posedge reset)
+
 
 endmodule // test
