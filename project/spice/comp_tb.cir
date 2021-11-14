@@ -42,8 +42,19 @@ V2 VRAMP VSS dc 0
 
 XC1 VCMP_OUT VSTORE VRAMP VDD VSS COMP
 
-.dc V2 0 1.5 0.214286
-.plot v(VCMP_OUT)
+* .dc V2 0 1.5 0.214286
+* .plot v(VCMP_OUT)
 
+
+.control
+set color0=white
+set color1=black
+unset askquit
+* tran 5n 60u
+dc V2 0 1.5 0.214286
+plot v(VCMP_OUT)
+
+.endc
+.end
 
 

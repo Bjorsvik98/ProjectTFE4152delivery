@@ -8,3 +8,6 @@ pixSens:
 
 ngspice:
 	ngspice -a ${TB}.cir
+
+comp:
+	${MAKE} ngspice TB=comp_tb
