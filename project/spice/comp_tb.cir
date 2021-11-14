@@ -53,7 +53,7 @@ unset askquit
 * tran 5n 60u
 dc V2 0 1.5 0.214286
 plot v(VCMP_OUT)
-
+ 
 .endc
 .end
 
