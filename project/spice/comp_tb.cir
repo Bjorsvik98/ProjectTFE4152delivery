@@ -20,7 +20,7 @@
 .param PW_READ =  {(C_READ +1)*TCLK}
 
 *- Delay of control signals
-.param TD_ERASE = {TCLK }
+.param TD_ERASE = {TCLK}
 .param TD_EXPOSE = {TD_ERASE + PW_ERASE + TCLK}
 .param TD_CONVERT = {TD_EXPOSE + PW_EXPOSE + TCLK}
 .param TD_READ = {TD_CONVERT + PW_CONVERT + TCLK}

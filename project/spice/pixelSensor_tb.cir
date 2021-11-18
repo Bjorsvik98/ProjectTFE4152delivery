@@ -177,10 +177,12 @@ B2 DO 0 V = V(DO_VDD)/V(VDD)
 *----------------------------------------------------------------
 
 .control
+set filetype=ascii
 set color0=white
 set color1=black
 unset askquit
 tran 5n 60u
+run
 *plot V(ERASE) V(EXPOSE) V(CONVERT) V(READ)
 * plot V(VRAMP) V(CONVERT) V(ERASE)
 * plot V(DO)
@@ -198,5 +200,8 @@ plot v(xdut.xm1.xm1.vg) v(xdut.xm1.xm1.dmem)
 * plot v(xdut.xm1.xm7.vg) v(xdut.xm1.xm7.dmem)
 * plot v(xdut.xm1.xm8.vg) v(xdut.xm1.xm8.dmem)
 * v(xdut.xm1.xm1.data) v(xdut.xm1.xm1.read) v(xdut.xm1.xm1.cmp)
+wrdata a.csv v(xdut.xm1.xm1.vg) v(xdut.xm1.xm1.dmem)
+
+
 .endc
 .end
