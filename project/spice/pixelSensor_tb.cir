@@ -161,17 +161,6 @@ B5 DATA VDD I=V(READ)*V(DATA,VDD)/1e4
 .ENDS
 
 
-
-*----------------------------------------------------------------
-* 8-bit DAC model model
-*----------------------------------------------------------------
-* integer = 2^7*b7 + 2^6*b6 ... 2^0*b0
-.SUBCKT DAC_8BIT DATA_7 DATA_6 DATA_5 DATA_4 DATA_3 DATA_2 DATA_1 DATA_0 DO VDD
-B1 DO_VDD 0 V = 128*V(DATA_7) + 64*V(DATA_6) + 32*V(DATA_5) + 16*V(DATA_4)+ 8*V(DATA_3) + 4*V(DATA_2) + 2*V(DATA_1) + 1*V(DATA_0)
-B2 DO 0 V = V(DO_VDD)/V(VDD)
-.ENDS
-
-
 *----------------------------------------------------------------
 * NGSPICE control
 *----------------------------------------------------------------
