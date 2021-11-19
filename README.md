@@ -1,5 +1,6 @@
 # Project in TFE4152 
 
+    ├── models                      # Model files used for SPICE simulation
     ├── project                     # Files for delivery in term project in TFE4152 Design of integrated circuits
     │    ├── spice                  # SPICE files used for modelling and simulating an analog pixel sensor
     │    ├── verilog                # SystemVerilog files for simulating a 2x2 pixel array
