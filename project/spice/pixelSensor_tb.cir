@@ -182,25 +182,18 @@ set color0=white
 set color1=black
 unset askquit
 tran 5n 60u
-run
-*plot V(ERASE) V(EXPOSE) V(CONVERT) V(READ)
-* plot V(VRAMP) V(CONVERT) V(ERASE)
-* plot V(DO)
-* plot V(XDUT.VSTORE) V(ERASE) V(EXPOSE) V(CONVERT) V(VRAMP) V(XDUT.VCMP_OUT) V(READ)
-* plot V(XDUT.VCMP_OUT)
-* plot v(xdut.xm1.xm1.vg) v(xdut.xm1.xm1.data)
 
-plot v(xdut.xm1.xm1.vg) v(xdut.xm1.xm1.dmem)
-* plot v(xdut.xm1.xm2.vg) v(xdut.xm1.xm2.dmem)
-* plot v(xdut.xm1.xm3.vg) v(xdut.xm1.xm3.dmem)
-* plot v(xdut.xm1.xm4.vg) v(xdut.xm1.xm4.dmem)
-* plot v(xdut.xm1.xm5.vg) v(xdut.xm1.xm5.dmem)
-* plot v(xdut.xm1.xm6.vg) v(xdut.xm1.xm6.dmem)
-*plot V(XDUT.READ)
-* plot v(xdut.xm1.xm7.vg) v(xdut.xm1.xm7.dmem)
-* plot v(xdut.xm1.xm8.vg) v(xdut.xm1.xm8.dmem)
-* v(xdut.xm1.xm1.data) v(xdut.xm1.xm1.read) v(xdut.xm1.xm1.cmp)
-wrdata a.csv v(xdut.xm1.xm1.vg) v(xdut.xm1.xm1.dmem)
+*plot and data for comparator testing
+plot V(XDUT.VCMP_OUT) V(VRAMP) V(XDUT.VSTORE)
+wrdata ramp.csv V(XDUT.VCMP_OUT) V(VRAMP) V(XDUT.VSTORE) 
+ 
+*plot and data for sensor testing
+plot V(XDUT.VSTORE) V(EXPOSE)
+wrdata sensor.csv V(XDUT.VSTORE) V(EXPOSE)
+
+*plot and data for output testing
+plot V(DATA_7) V(DATA_6) V(DATA_5) V(DATA_4) V(DATA_3) V(DATA_2) V(DATA_1) V(DATA_0) 
+wrdata data.csv V(DATA_7) V(DATA_6) V(DATA_5) V(DATA_4) V(DATA_3) V(DATA_2) V(DATA_1) V(DATA_0) 
 
 
 .endc
